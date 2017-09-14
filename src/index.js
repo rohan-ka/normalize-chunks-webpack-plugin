@@ -13,13 +13,21 @@ class NormalizeChunksPlugin {
   }
 
   static createAssetMap(assetsByChunkName) {
-    const addChunkToLookup = (lookup, chunk) => {
+    const addChunkToLookup = (lookup = {}, chunk) => {
       const [name, hash, extension] = chunk.split('.'); // eslint-disable-line no-unused-vars
 
       return { ...lookup, [`${name}.${extension}`]: chunk };
     };
 
-    const buildLookup = (assetLookup, chunks) => { return { ...assetLookup, ...chunks.reduce(addChunkToLookup, {}) }; };
+    const buildLookup = (assetLookup, chunks) => {
+      let entry = {};
+      if (Array.isArray(chunks)) {
+        entry = chunks.reduce(addChunkToLookup);
+      } else {
+        entry = addChunkToLookup({}, chunks);
+      }
+      return { ...assetLookup, ...entry };
+    };
 
     return Object.keys(assetsByChunkName)
       .map(key => assetsByChunkName[key])
