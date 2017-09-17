@@ -1,36 +1,37 @@
 const { resolve } = require('path');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 
 
 class NormalizeChunksPlugin {
   constructor(options) {
     const defaultOptions = {
       filename: 'normalizeChunks.json',
-      path: resolve(process.cwd(), 'build/'),
+      path: resolve(process.cwd(), 'build'),
     };
 
-    this.options = { ...defaultOptions, ...options };
+    this.options = Object.assign(defaultOptions, options);
   }
 
   static createAssetMap(assetsByChunkName) {
-    const addChunkToLookup = (lookup = {}, chunk) => {
-      const [name, hash, extension] = chunk.split('.'); // eslint-disable-line no-unused-vars
-
-      return { ...lookup, [`${name}.${extension}`]: chunk };
+    const addChunkToLookup = (lookup, chunk) => {
+      const [name, hash, ...rest] = chunk.split('.'); // eslint-disable-line no-unused-vars
+      lookup[`${name}.${rest.join('.')}`] = chunk; // eslint-disable-line no-param-reassign
+      return lookup;
     };
 
     const buildLookup = (assetLookup, chunks) => {
       let entry = {};
       if (Array.isArray(chunks)) {
-        entry = chunks.reduce(addChunkToLookup);
+        entry = chunks.reduce(addChunkToLookup, {});
       } else {
         entry = addChunkToLookup({}, chunks);
       }
-      return { ...assetLookup, ...entry };
+      return Object.assign({}, assetLookup, entry);
     };
 
     return Object.keys(assetsByChunkName)
-      .map(key => assetsByChunkName[key])
+      .map((key) => assetsByChunkName[key])
       .reduce(buildLookup, {});
   }
 
@@ -39,18 +40,24 @@ class NormalizeChunksPlugin {
       const { assetsByChunkName } = compilation.getStats().toJson();
 
       const assetMap = NormalizeChunksPlugin.createAssetMap(assetsByChunkName);
-      const assetJson = JSON.stringify(assetMap, null, 2);
+      const assetJson = JSON.stringify(assetMap);
 
-      this.writeToFile(assetJson).then(() => {
+      const emitFile = () => {
         compilation.assets[this.options.filename] = { // eslint-disable-line no-param-reassign
-          source() {
-            return assetJson;
-          },
-          size() {
-            return assetJson.length;
-          },
+          source: () => assetJson,
+          size: () => assetJson.length,
         };
-      }).then(cb);
+      };
+
+      this.createBuildDirectory()
+        .then(() => this.writeToFile(assetJson))
+        .then(emitFile).then(cb);
+    });
+  }
+
+  createBuildDirectory() {
+    return new Promise((res, rej) => {
+      mkdirp(this.options.path, (err) => (err ? rej(err) : res()));
     });
   }
 

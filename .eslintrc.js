@@ -1,3 +1,9 @@
 module.exports = {
-    "extends": "webpack"
+  extends: "webpack",
+  rules: {
+    "arrow-parens": [
+        "error",
+        "always"
+    ],
+  }
 };

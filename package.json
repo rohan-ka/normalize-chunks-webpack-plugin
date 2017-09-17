@@ -1,6 +1,6 @@
 {
   "name": "normalize-chunks-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "author": "Rohan Kamat",
   "license": "MIT",
@@ -24,5 +24,8 @@
     "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.7.0",
     "pre-commit": "^1.2.2"
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1"
   }
 }
