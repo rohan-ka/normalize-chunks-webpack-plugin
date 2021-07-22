@@ -1,9 +1,10 @@
 module.exports = {
-  extends: "webpack",
+  extends: ['webpack', 'prettier'],
   rules: {
-    "arrow-parens": [
-        "error",
-        "always"
+    'arrow-parens': [
+        'error',
+        'always',
     ],
+    'class-methods-use-this': 0,
   }
 };

@@ -1,1 +1,138 @@
-'use strict';var _createClass=function(){function a(a,b){for(var c,d=0;d<b.length;d++)c=b[d],c.enumerable=c.enumerable||!1,c.configurable=!0,'value'in c&&(c.writable=!0),Object.defineProperty(a,c.key,c)}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}();function _toArray(a){return Array.isArray(a)?a:Array.from(a)}function _classCallCheck(a,b){if(!(a instanceof b))throw new TypeError('Cannot call a class as a function')}var _require=require('path'),resolve=_require.resolve,fs=require('fs'),mkdirp=require('mkdirp'),NormalizeChunksPlugin=function(){function a(b){_classCallCheck(this,a);var c={filename:'normalizeChunks.json',path:resolve(process.cwd(),'build')};this.options=Object.assign(c,b)}return _createClass(a,[{key:'apply',value:function apply(b){var c=this;b.plugin('emit',function(b,d){var e=b.getStats().toJson(),f=e.assetsByChunkName,g=a.createAssetMap(f),h=JSON.stringify(g);c.createBuildDirectory().then(function(){return c.writeToFile(h)}).then(function emitFile(){b.assets[c.options.filename]={source:function source(){return h},size:function size(){return h.length}}}).then(d)})}},{key:'createBuildDirectory',value:function createBuildDirectory(){var a=this;return new Promise(function(b,c){mkdirp(a.options.path,function(a){return a?c(a):b()})})}},{key:'writeToFile',value:function writeToFile(a){var b=this;return new Promise(function(c){var d=fs.createWriteStream(b.filename(),{mode:493});d.write(a,'utf-8',c)})}},{key:'filename',value:function(){var a=this.options,b=a.filename,c=a.path;return c+'/'+b}}],[{key:'createAssetMap',value:function createAssetMap(a){var b=function(a,b){var c=b.split('.'),d=_toArray(c),e=d[0],f=d[1],g=d.slice(2);return a[e+'.'+g.join('.')]=b,a};return Object.keys(a).map(function(b){return a[b]}).reduce(function buildLookup(a,c){var d={};return d=Array.isArray(c)?c.reduce(b,{}):b({},c),Object.assign({},a,d)},{})}}]),a}();module.exports=NormalizeChunksPlugin;
+"use strict";
+
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('path'),
+    resolve = _require.resolve;
+
+var fs = require('fs');
+
+var mkdirp = require('mkdirp');
+
+var NormalizeChunksPlugin = /*#__PURE__*/function () {
+  function NormalizeChunksPlugin(options) {
+    _classCallCheck(this, NormalizeChunksPlugin);
+
+    console.log('here in constructor');
+    var defaultOptions = {
+      filename: 'normalizeChunks.json',
+      path: resolve(process.cwd(), 'build')
+    };
+    this.options = Object.assign(defaultOptions, options);
+  }
+
+  _createClass(NormalizeChunksPlugin, [{
+    key: "apply",
+    value: // eslint-disable-next-line class-methods-use-this
+    function apply(compiler) {
+      compiler.hooks.emit.tapAsync('NormalizeChunksPlugin', function (compilation, callback) {
+        var _compilation$getStats = compilation.getStats().toJson(),
+            assetsByChunkName = _compilation$getStats.assetsByChunkName,
+            entrypoints = _compilation$getStats.entrypoints;
+
+        console.log(entrypoints);
+        var assetMap = NormalizeChunksPlugin.createAssetMap(assetsByChunkName);
+        console.log(assetMap); // Manipulate the build using the plugin API provided by webpack
+        // compilation.addModule(/* ... */);
+
+        callback();
+      }); // compiler.plugin('emit', (compilation, cb) => {
+      //   const { assetsByChunkName } = compilation.getStats().toJson();
+      //   const assetMap = NormalizeChunksPlugin.createAssetMap(assetsByChunkName);
+      //   const assetJson = JSON.stringify(assetMap);
+      //   const emitFile = () => {
+      //     compilation.assets[this.options.filename] = { // eslint-disable-line no-param-reassign
+      //       source: () => assetJson,
+      //       size: () => assetJson.length,
+      //     };
+      //   };
+      //   this.createBuildDirectory()
+      //     .then(() => this.writeToFile(assetJson))
+      //     .then(emitFile).then(cb);
+      // });
+    }
+  }, {
+    key: "createBuildDirectory",
+    value: function createBuildDirectory() {
+      var _this = this;
+
+      return new Promise(function (res, rej) {
+        mkdirp(_this.options.path, function (err) {
+          return err ? rej(err) : res();
+        });
+      });
+    }
+  }, {
+    key: "writeToFile",
+    value: function writeToFile(content) {
+      var _this2 = this;
+
+      return new Promise(function (res) {
+        var file = fs.createWriteStream(_this2.filename(), {
+          mode: 493
+        });
+        file.write(content, 'utf-8', res);
+      });
+    }
+  }, {
+    key: "filename",
+    value: function filename() {
+      var _this$options = this.options,
+          filename = _this$options.filename,
+          path = _this$options.path;
+      return "".concat(path, "/").concat(filename);
+    }
+  }], [{
+    key: "createAssetMap",
+    value: function createAssetMap(assetsByChunkName) {
+      var addChunkToLookup = function addChunkToLookup(lookup, chunk) {
+        var _chunk$split = chunk.split('.'),
+            _chunk$split2 = _toArray(_chunk$split),
+            name = _chunk$split2[0],
+            hash = _chunk$split2[1],
+            rest = _chunk$split2.slice(2); // eslint-disable-line no-unused-vars
+
+
+        lookup["".concat(name, ".").concat(rest.join('.'))] = chunk; // eslint-disable-line no-param-reassign
+
+        return lookup;
+      };
+
+      var buildLookup = function buildLookup(assetLookup, chunks) {
+        var entry = {};
+
+        if (Array.isArray(chunks)) {
+          entry = chunks.reduce(addChunkToLookup, {});
+        } else {
+          entry = addChunkToLookup({}, chunks);
+        }
+
+        return Object.assign({}, assetLookup, entry);
+      };
+
+      return Object.keys(assetsByChunkName).map(function (key) {
+        return assetsByChunkName[key];
+      }).reduce(buildLookup, {});
+    }
+  }]);
+
+  return NormalizeChunksPlugin;
+}();
+
+module.exports = NormalizeChunksPlugin;

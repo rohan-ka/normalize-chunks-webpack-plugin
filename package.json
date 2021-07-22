@@ -1,7 +1,7 @@
 {
   "name": "normalize-chunks-webpack-plugin",
   "version": "1.0.2",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "author": "Rohan Kamat",
   "license": "MIT",
   "description": "Creates a json that maps a file to its chunkhashed name",
@@ -11,21 +11,20 @@
     "prebuild": "npm run lint"
   },
   "pre-commit": [
-    "lint",
-    "build"
+    "lint"
   ],
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-minify": "^0.2.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8",
     "eslint": "^4.5.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.7.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "prettier": "^2.3.2"
   },
   "dependencies": {
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^1.0.4"
   }
 }
