@@ -77,7 +77,7 @@ class NormalizeChunksPlugin {
       .then(() => this.writeFile(path.join(this.options.path, this.options.filename), assetJson, { mode: 0o755 }))
       .then(() => this.writeFile(`${this.options.path}/${this.options.entrypointsFilename}`, entrypointsJson, { mode: 0o755 }))
       .then(emitFiles)
-      .then(callback);
+      .then( callback );
   }
 }
 
