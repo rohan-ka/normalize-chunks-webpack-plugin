@@ -4,7 +4,6 @@ const path = require('path');
 const { promisify } = require('util');
 const mkdirp = require('mkdirp');
 
-
 class NormalizeChunksPlugin {
   constructor(options) {
     const defaultOptions = {
@@ -74,10 +73,22 @@ class NormalizeChunksPlugin {
     };
 
     mkdirp(this.options.path)
-      .then(() => this.writeFile(path.join(this.options.path, this.options.filename), assetJson, { mode: 0o755 }))
-      .then(() => this.writeFile(`${this.options.path}/${this.options.entrypointsFilename}`, entrypointsJson, { mode: 0o755 }))
+      .then(() =>
+        this.writeFile(
+          path.join(this.options.path, this.options.filename),
+          assetJson,
+          { mode: 0o755 },
+        ),
+      )
+      .then(() =>
+        this.writeFile(
+          path.join(this.options.path, this.options.entrypointsFilename),
+          entrypointsJson,
+          { mode: 0o755 },
+        ),
+      )
       .then(emitFiles)
-      .then( callback );
+      .then(callback);
   }
 }
 
