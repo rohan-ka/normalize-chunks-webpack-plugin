@@ -53,7 +53,7 @@ class NormalizeChunksPlugin {
   run(compilation, callback) {
     const { assetsByChunkName, entrypoints } = compilation.getStats().toJson();
 
-    const assetMap = NormalizeChunksPlugin.createAssetMap(assetsByChunkName);
+    const assetMap = this.createAssetMap(assetsByChunkName);
 
     const assetJson = JSON.stringify(assetMap);
     const entrypointsJson = JSON.stringify(entrypoints);
